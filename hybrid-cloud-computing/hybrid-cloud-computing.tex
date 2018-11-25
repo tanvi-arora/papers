@@ -500,12 +500,12 @@ create more value for them rather than concentrating their resources on procurin
 hardware or provisioning servers. Companies that do not want to invest in hardware that is hardly utilized for about 3-4 hours in a day make a classic case for moving to cloud. Cloud follows pay-per use model.Companies pay for the time resources are utilized. The potential benefits that come along with the ability to scale resources in a way that is flexible and ultra-low cost are obvious: low barrier to entry
 for small organizations, mitigation of security concerns around cloud storage.
 
-Businesses are often confused by the thought of moving to cloud. Do their concerns outweigh the advantages of moving to cloud [1]. The present paper focuses on hybrid cloud computing architecture and how it helps solve some of these concerns.
+Businesses are often confused by the thought of moving to cloud. Do their concerns outweigh the advantages of moving to cloud \cite{cloudadv}. The present paper focuses on hybrid cloud computing architecture and how it helps solve some of these concerns.
 
 Our experimental evaluations are conducted on the three top cloud providers - Amazon AWS , Google Cloud and Microsoft Azure.To conduct this experiment with ease we have given the role of on-premise environment to one of the cloud providers and tested connectivity between resources available on different cloud .
 
 
-\subsection{Advantages of Cloud}  [2] 
+\subsection{Advantages of Cloud}  \cite{cloudbenefits}
 \begin{enumerate}
 	\item Flexibility : Cloud solutions are ideal for businesses with the requirement of fluctuating bandwidth of resources. It is easy to scale up or scale down your resources on cloud. This level of agility gives businesses using cloud computing a real advantage over competitors. 
 	\item Disaster recovery : This comes associated with cost. Larger companies with wide-scale IT investment have the cash and expertise to set up a robust disaster recovery. Cloud-based backup and recovery solutions save time, avoid large up-front investments allowing even small companies to invest in setting up a robust disaster recovery.
@@ -521,7 +521,7 @@ Our experimental evaluations are conducted on the three top cloud providers - Am
 \subsection{Business Concerns}
 \begin{enumerate}
 	\item Security  : Cloud environments experience – at a high level – the same threats as traditional data center environments, the threat picture is the same. Both run softwares, softwares have vulnerabilities, and there is someone out there waiting to exploit these vulnerabilities. However security on cloud is a shared responsibility model of security. While cloud provider takes care of the security of the cloud , some aspects of security remain sole responsibility of the consumer. Effective cloud security depends
-on knowing and meeting these consumer responsibilities.  [3]
+on knowing and meeting these consumer responsibilities.  \cite{cloudno}
 
 \begin{figure}[h]
 	\center{\includegraphics[width=0.5\textwidth]{figures/Shared_Responsibility_Model.jpg}}
@@ -533,7 +533,7 @@ the world. Like globalization of networks. By crossing borders, involves conside
 countries with restrictive privacy and protection laws . This is somewhat covered as
 part of customer responsibility towards cloud security. For this corporations need to
 understand what kind of data will they load into cloud and who will have access to
-this data. [4]
+this data. \cite{DataPrivacy}
 Other aspect of data privacy is handling sensitive data. Yes one of the problems is
 that this technology is light years ahead of the law and there are questions that need
 to be answered. Who owns the data, consumer or the hosting cloud provider? Can
@@ -543,12 +543,12 @@ responsibility. Keep data under proper control and apply data encryption methods
 Regarding the question about laws, each company wants to protect their reputation.
 To get more clients and maintain them, cloud providers would uphold your data
 privacy. There are getting more managed and include all the necessary provisions
-that one should take while setting up their data on cloud. [5] 
+that one should take while setting up their data on cloud. \cite{DataPrivacy2} 
 
 	\item ROI : ROI or Return of Investment is widely a measure of financial success and can be a measured in a variety of ways. If you move to public cloud, you generally decrease
 investment but increase cost. With private cloud, it is vice-verse. But what matters
 is value to business, customer value, seller value, market brand value, corporate value.
-In case of cloud services, these relate to productivity, speed, size and quality. [6] 
+In case of cloud services, these relate to productivity, speed, size and quality. \cite{ROI} 
 
 	\item Integration Issues : Most enterprises would apply an incremental model of implementation. It is less risky than big-bang. This requires integration of services.The risk of not being able to integrate is critical. If you cannot build a system, you cannot use it. This also adds to the cost of including glue-software to connect various interfaces .It could involve rewrite of code or existing process models. Not to forget significant skills are required to assemble and customize multiple cloud services , requiring the applications to be loosely coupled, programmed to perform in an integration layer instead of underlying
 infrastructure. 
@@ -616,7 +616,7 @@ Depending on the flexibility of the existing on-premise architecture, storage an
 	\end{enumerate}
 
 
-	\item S3 –\(> Lambda \) –\(> DynamoDB \)  : As part of this experiment a csv file is uploaded to S3. AWS Lambda has a trigger whenever a new item is added to S3. Lambda function kicks in, it does its processing and uploads the data in csv file in S3 to DynamoDB. DynamoDB can process this data for end user or any analytic requirement. AWS Lambda is a server less architecture which utilizes resources required for processing the file in S3 to DynamoDB. Once the processing is complete the client is not charged unless the Lambda function is triggered again. To achieve this we followed the following steps: 
+	\item S3 –\(> Lambda \) –\(> DynamoDB \)  : As part of this experiment a csv file is uploaded to S3. AWS Lambda has a trigger whenever a new item is added to S3. Lambda function kicks in, it does its processing and uploads the data in csv file in S3 to DynamoDB. DynamoDB can process this data for end user or any analytic requirement. AWS Lambda is a server less architecture which utilizes resources required for processing the file in S3 to DynamoDB. Once the processing is complete the client is not charged unless the Lambda function is triggered again. To achieve this we followed the following steps:\cite{ReadCSVFile} 
 	
 	\begin{figure}[h]
     \center{\includegraphics[width=0.6\textwidth]
@@ -811,7 +811,7 @@ In future work  we will experiment on creating VPC tunnel between the different 
 
 \subsection{S3}
 
-S3 - stands for Simple Storage Service. This service could be utilized to collect, store and analyze huge amounts of data. Data stored in S3 could be retrieved from anywhere. It provides comprehensive security and compliance capabilities. S3 is designed to deliver 99.999999999\% durability. Some of the other features/advantages are :
+S3 - stands for Simple Storage Service. This service could be utilized to collect, store and analyze huge amounts of data. Data stored in S3 could be retrieved from anywhere. It provides comprehensive security and compliance capabilities. S3 is designed to deliver 99.999999999\% durability. Some of the other features/advantages are \cite{S3documentation}
 
 \begin{enumerate}
 	\item Unmatched Durability, Availability \& Scability
@@ -824,7 +824,7 @@ S3 - stands for Simple Storage Service. This service could be utilized to collec
 
 \subsection{Google Cloud Storage}
 
-Google Cloud Storage is a RESTful online file storage web service for storing and accessing data on Google Cloud Platform infrastructure. It is comparable to Amazon S3 . Contrary to Google Drive, this is more suitable for enterprises.Some of the other features/advantages are [7] :
+Google Cloud Storage is a RESTful online file storage web service for storing and accessing data on Google Cloud Platform infrastructure. It is comparable to Amazon S3 . Contrary to Google Drive, this is more suitable for enterprises.Some of the other features/advantages are \cite{googlestorage}
 
 \begin{enumerate}
 	\item designed for 99.999999999\% durability. It stores data redundantly with automatic checksums to ensure data integrity.
@@ -834,7 +834,7 @@ Google Cloud Storage is a RESTful online file storage web service for storing an
 \end{enumerate}
 
 \subsection{Dynamo DB} 
-Amazon DynamoDB is a non-relational database that delivers reliable performance at any scale. Some of the other features/advantages are :
+Amazon DynamoDB is a non-relational database that delivers reliable performance at any scale. Some of the other features/advantages are :\cite{DynamoDBDoc}
 
 \begin{enumerate}
 	\item Performance at scale
@@ -843,7 +843,7 @@ Amazon DynamoDB is a non-relational database that delivers reliable performance 
 \end{enumerate}
 
 \subsection{Elastic Compute Cloud (EC2)} 
-Amazon Elastic Comput Cloud is a web service that provides secure, re sizable compute capacity in the cloud. EC2 has changed the economics of computing by allowing companies to pay only for the capacity that is being utilized.Some of the other features/advantages are :
+Amazon Elastic Comput Cloud is a web service that provides secure, re sizable compute capacity in the cloud. EC2 has changed the economics of computing by allowing companies to pay only for the capacity that is being utilized.Some of the other features/advantages are \cite{EC2Doc}
 
 \begin{enumerate}
 	\item Elastic web-scale computing
@@ -857,7 +857,7 @@ Amazon Elastic Comput Cloud is a web service that provides secure, re sizable co
 \end{enumerate}
 
 \subsection{AWS Lambda} 
-AWS Lambda can run code without provisioning or managing servers. We have to pay only for the compute time consumed.Some of the other features/advantages are :
+AWS Lambda can run code without provisioning or managing servers. We have to pay only for the compute time consumed.Some of the other features/advantages are \cite{LambdaDoc}
 
 \begin{enumerate}
 	\item No servers to manage
@@ -866,7 +866,7 @@ AWS Lambda can run code without provisioning or managing servers. We have to pay
 \end{enumerate}
 
 \subsection{Azure SQL Database}
-This is a relational database-as-a-service (DBaaS) with the latest version of Microsoft SQL Server Database Engine. It is high performance, reliable and secure database on which data-driven applications and websites can be built in the programming language of choice without needing to manage infrastructure. Some of the other features/advantages are :
+This is a relational database-as-a-service (DBaaS) with the latest version of Microsoft SQL Server Database Engine. It is high performance, reliable and secure database on which data-driven applications and websites can be built in the programming language of choice without needing to manage infrastructure. Some of the other features/advantages are  \cite{AzureSQLDB}
 
 \begin{enumerate}
 	\item Fully managed
@@ -904,20 +904,6 @@ The authors would like to thank Dr Sohail Rafiqi for giving us the opportunity t
 
 % references section
 
-\section{REFERENCES}
-%\begin{frame}[fragile]
-%\frametitle{External Link Example}
-
-\begin{verbatim}
-[1] Online {https://www.marutitech.com/5-reasons-why-cloud-can-transform-your-business}
-[2] Online {https://www.salesforce.com/uk/blog/2015/11/why-move-to-the-cloud-10-benefits-of-cloud-computing.html}
-[3] Online {https://insights.sei.cmu.edu/sei_blog/2018/03/12-risks-threats-vulnerabilities-in-moving-to-the-cloud.html}
-[4] Online {https://legal.thomsonreuters.com/en/insights/articles/understanding-data-privacy-and-cloud-computing}
-[5] Online {https://www.privacyrights.org/blog/privacy-implications-cloud-computing}
-[6] Online {http://www.opengroup.org/cloud/cloud_for_business/p6.htm}
-[7] Online {https://cloud.google.com/storage/features/}
-\end{verbatim}
-
 
 
 %\\[15pt]
@@ -942,16 +928,14 @@ The authors would like to thank Dr Sohail Rafiqi for giving us the opportunity t
 
 
 
+\bibliographystyle{IEEEtran}
+\bibliography{references}
 
 
 
-\begin{thebibliography}{1}
-
-\bibitem{IEEEhowto:kopka}
 
 
 
-\end{thebibliography}
 
 % biography section
 % 
