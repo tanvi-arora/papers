@@ -33,6 +33,12 @@
   \url{https://www.salesforce.com/uk/blog/2015/11/why-move-to-the-cloud-10-benefits-of-cloud-computing.html}
 \BIBentrySTDinterwordspacing
 
+\bibitem{cloudno}
+\BIBentryALTinterwordspacing
+ [Online]. Available:
+  \url{https://insights.sei.cmu.edu/sei\_blog/2018/03/12-risks-threats-vulnerabilities-in-moving-to-the-cloud.html}
+\BIBentrySTDinterwordspacing
+
 \bibitem{DataPrivacy}
 \BIBentryALTinterwordspacing
  [Online]. Available:
@@ -43,6 +49,12 @@
 \BIBentryALTinterwordspacing
  [Online]. Available:
   \url{https://www.privacyrights.org/blog/privacy-implications-cloud-computing}
+\BIBentrySTDinterwordspacing
+
+\bibitem{ROI}
+\BIBentryALTinterwordspacing
+ [Online]. Available:
+  \url{http://www.opengroup.org/cloud/cloud\_for\_business/p6.htm}
 \BIBentrySTDinterwordspacing
 
 \bibitem{ReadCSVFile}

@@ -649,7 +649,26 @@ Depending on the flexibility of the existing on-premise architecture, storage an
  \end{enumerate}
 \end{enumerate}
 
+\item S3 –\(> Lambda \) –\(> Azure SQL Database \)  : As part of this experiment connectivity is tested between Amazon and Azure by invoking a lambda function to unload data from Azure database.  AWS Lambda has a trigger whenever a new item is added to S3. Lambda function kicks in, it does its processing and performs query on Azure database. This is another solution of using serverless compute in a hybrid model.  Once the processing is complete the client is not charged unless the Lambda function is triggered again. To achieve this we followed the following steps:\cite{ReadCSVFile} 
+	
+	\begin{figure}[h]
+    \center{\includegraphics[width=0.5\textwidth]
+    {figures/Lambda_azure.png}}
+    \caption{\label{fig:S3_Azure} Lambda S3 to Azure}
+	\end{figure}
 
+
+\begin{enumerate}
+ \item Create Lambda Function
+ \begin{enumerate} 
+ 	\item Create function, author from scratch
+ 	\item Give function name
+ 	\item Select runtime as Python 3.0
+ 	\item Choose existing role
+ 	\item Select role created above
+ 	\item Add trigger for S3, select bucket, event type (object created), prefix and filter if any.
+ \end{enumerate}
+ \end{enumerate}
 
 	\item AWS/Google Cloud –\(> Azure SQL Database \) : As part of this experiment, connectivity is tested between Amazon EC2 instance used for compute with SQL Server on Azure. 
 	
@@ -954,7 +973,8 @@ The authors would like to thank Dr Sohail Rafiqi for giving us the opportunity t
 
 % if you will not have a photo at all:
 \begin{IEEEbiographynophoto}{Mahesh Kuklani}
-Mahesh Kuklani is currently working towards his Master's degree in Data Science at Southern Methodist University, Dallas , TX.
+Mahesh Kuklani received his bachelor's degree in Mechanical Engineering from University of Pune, India. He is currently working towards his Master's degree in Data Science at Southern Methodist University, Dallas , TX. He works as a Database Administrator at ECFMG Philadelphia PA and has over 20 years of experience working in this field.
+
 \end{IEEEbiographynophoto}
 
 % insert where needed to balance the two columns on the last page with
@@ -962,7 +982,7 @@ Mahesh Kuklani is currently working towards his Master's degree in Data Science 
 %\newpage
 
 \begin{IEEEbiographynophoto}{Tanvi Arora}
-Tanvi Arora received the bachelor's degree in Computer Science Engineering from University of Rajasthan, India . She is currently working towards her Master's degree in Data Science at Southern Methodist University, Dallas , Texas.She works full time as a Senior Software Developer in USA and has about 11 years of work experience in this field .
+Tanvi Arora received the bachelor's degree in Computer Science Engineering from University of Rajasthan, India . She is currently working towards her Master's degree in Data Science at Southern Methodist University, Dallas , Texas.She works full time as a Senior Software Developer in USA and has 11 years of work experience in this field .
 \end{IEEEbiographynophoto}
 
 % You can push biographies down or up by placing

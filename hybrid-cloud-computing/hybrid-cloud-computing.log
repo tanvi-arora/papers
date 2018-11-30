@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.11.23)  25 NOV 2018 17:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.11.23)  29 NOV 2018 21:41
 entering extended mode
 **./hybrid-cloud-computing.tex
 (hybrid-cloud-computing.tex
@@ -348,9 +348,6 @@ Package grfext Info: Graphics extension search list:
 G,.JBIG2,.JB2,.eps]
 (grfext)             \AppendGraphicsExtensions on input line 456.
 )
-
-LaTeX Warning: Citation `cloudno' on page 1 undefined on input line 524.
-
 <figures/Shared_Responsibility_Model.jpg, id=1, 722.7pt x 406.51875pt>
 File: figures/Shared_Responsibility_Model.jpg Graphic file (type jpg)
 <use figures/Shared_Responsibility_Model.jpg>
@@ -369,10 +366,6 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 ]
-
-LaTeX Warning: Citation `ROI' on page 2 undefined on input line 551.
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 <figures/Current_State.png, id=10, 911.405pt x 681.54625pt>
@@ -409,55 +402,67 @@ Overfull \hbox (57.60315pt too wide) in paragraph at lines 622--624
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/AWS_Google_Azure.png, id=18, 395.4775pt x 481.8pt>
+<figures/Lambda_azure.png, id=18, 450.18187pt x 179.16937pt>
+File: figures/Lambda_azure.png Graphic file (type png)
+<use figures/Lambda_azure.png>
+Package pdftex.def Info: figures/Lambda_azure.png  used on input line 656.
+(pdftex.def)             Requested size: 258.0pt x 102.68532pt.
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 655--657
+ [] 
+ []
+
+[3 <./figures/SSIS_ADF.png> <./figures/AWS_S3_Lambda_DynamoDB.png> <./figures/L
+ambda_azure.png>]
+<figures/AWS_Google_Azure.png, id=26, 395.4775pt x 481.8pt>
 File: figures/AWS_Google_Azure.png Graphic file (type png)
 <use figures/AWS_Google_Azure.png>
-Package pdftex.def Info: figures/AWS_Google_Azure.png  used on input line 658.
+Package pdftex.def Info: figures/AWS_Google_Azure.png  used on input line 677.
 (pdftex.def)             Requested size: 154.80157pt x 188.59229pt.
-[3 <./figures/SSIS_ADF.png> <./figures/AWS_S3_Lambda_DynamoDB.png> <./figures/A
-WS_Google_Azure.png>] [4] (hybrid-cloud-computing.bbl
-Overfull \hbox (43.93243pt too wide) in paragraph at lines 38--41
+ [4 <./figures/AWS_Google_Azure.png>]
+(hybrid-cloud-computing.bbl
+Overfull \hbox (43.93243pt too wide) in paragraph at lines 44--47
 []\OT1/ptm/m/n/8 [Online]. Avail-able: https://legal.thomsonreuters.com/en/insi
 ghts/miscs/understanding-
  []
 
 
-Underfull \hbox (badness 2065) in paragraph at lines 44--47
+Underfull \hbox (badness 2065) in paragraph at lines 50--53
 []\OT1/ptm/m/n/8 [Online]. Avail-able: https://www.privacyrights.org/blog/priva
 cy-
  []
 
 
-Underfull \hbox (badness 2418) in paragraph at lines 80--83
+Overfull \hbox (25.26167pt too wide) in paragraph at lines 56--59
+[]\OT1/ptm/m/n/8 [Online]. Avail-able: http://www.opengroup.org/cloud/cloud[]fo
+r[]business/p6.htm 
+ []
+
+
+Underfull \hbox (badness 2418) in paragraph at lines 92--95
 []\OT1/ptm/m/n/8 [Online]. Avail-able: https://docs.microsoft.com/en-us/azure/s
 ql-
  []
 
-) [5
-
-] (hybrid-cloud-computing.aux)
-
-LaTeX Warning: There were undefined references.
-
- ) 
+) [5] (hybrid-cloud-computing.aux) ) 
 Here is how much of TeX's memory you used:
- 3991 strings out of 492970
- 67966 string characters out of 3126593
- 135996 words of memory out of 3000000
- 7842 multiletter control sequences out of 15000+200000
- 38444 words of font info for 68 fonts, out of 3000000 for 9000
+ 3996 strings out of 492970
+ 68105 string characters out of 3126593
+ 136012 words of memory out of 3000000
+ 7847 multiletter control sequences out of 15000+200000
+ 37337 words of font info for 67 fonts, out of 3000000 for 9000
  1144 hyphenation exceptions out of 8191
- 41i,6n,39p,762b,410s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Users/tanvi/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/base/8r.enc
-}<C:/Users/tanvi/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/
-cm/cmmi10.pfb><C:/Users/tanvi/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/urw
-/times/utmb8a.pfb><C:/Users/tanvi/AppData/Local/Programs/MiKTeX 2.9/fonts/type1
-/urw/times/utmbi8a.pfb><C:/Users/tanvi/AppData/Local/Programs/MiKTeX 2.9/fonts/
-type1/urw/times/utmr8a.pfb><C:/Users/tanvi/AppData/Local/Programs/MiKTeX 2.9/fo
-nts/type1/urw/times/utmri8a.pfb>
-Output written on hybrid-cloud-computing.pdf (5 pages, 273552 bytes).
+ 41i,6n,39p,762b,404s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Users/tanvi/AppData/Local/Programs/MiKT
+eX 2.9/fonts/enc/dvips/base/8r.enc}<C:/Users/tanvi/AppData/Local/Programs/MiKTe
+X 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/tanvi/AppData/Local/P
+rograms/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Users/tanvi/AppData/Loc
+al/Programs/MiKTeX 2.9/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/tanvi/AppDat
+a/Local/Programs/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Users/tanvi/Ap
+pData/Local/Programs/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
+Output written on hybrid-cloud-computing.pdf (5 pages, 280269 bytes).
 PDF statistics:
- 49 PDF objects out of 1000 (max. 8388607)
+ 51 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 26 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 31 words of extra memory for PDF output out of 10000 (max. 10000000)
 
