@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.11.23)  29 NOV 2018 21:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.11.23)  29 NOV 2018 21:50
 entering extended mode
 **./hybrid-cloud-computing.tex
 (hybrid-cloud-computing.tex
@@ -352,10 +352,10 @@ G,.JBIG2,.JB2,.eps]
 File: figures/Shared_Responsibility_Model.jpg Graphic file (type jpg)
 <use figures/Shared_Responsibility_Model.jpg>
 Package pdftex.def Info: figures/Shared_Responsibility_Model.jpg  used on input
- line 527.
+ line 528.
 (pdftex.def)             Requested size: 258.0pt x 145.12465pt.
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 527--528
+Overfull \hbox (6.0pt too wide) in paragraph at lines 528--529
  [] 
  []
 
@@ -371,31 +371,31 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 <figures/Current_State.png, id=10, 911.405pt x 681.54625pt>
 File: figures/Current_State.png Graphic file (type png)
 <use figures/Current_State.png>
-Package pdftex.def Info: figures/Current_State.png  used on input line 578.
+Package pdftex.def Info: figures/Current_State.png  used on input line 580.
 (pdftex.def)             Requested size: 258.0pt x 192.93236pt.
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 578--579
+Overfull \hbox (6.0pt too wide) in paragraph at lines 580--581
  [] 
  []
 
 <figures/SSIS_ADF.png, id=12, 301.8778pt x 375.65344pt>
 File: figures/SSIS_ADF.png Graphic file (type png)
 <use figures/SSIS_ADF.png>
-Package pdftex.def Info: figures/SSIS_ADF.png  used on input line 596.
+Package pdftex.def Info: figures/SSIS_ADF.png  used on input line 598.
 (pdftex.def)             Requested size: 154.80157pt x 192.62967pt.
 [2 <./figures/Shared_Responsibility_Model.jpg> <./figures/Current_State.png>]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 619.
+(Font)              <7> on input line 621.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 619.
+(Font)              <5> on input line 621.
 <figures/AWS_S3_Lambda_DynamoDB.png, id=17, 366.61969pt x 118.19156pt>
 File: figures/AWS_S3_Lambda_DynamoDB.png Graphic file (type png)
 <use figures/AWS_S3_Lambda_DynamoDB.png>
 Package pdftex.def Info: figures/AWS_S3_Lambda_DynamoDB.png  used on input line
- 623.
+ 625.
 (pdftex.def)             Requested size: 309.60315pt x 99.81586pt.
 
-Overfull \hbox (57.60315pt too wide) in paragraph at lines 622--624
+Overfull \hbox (57.60315pt too wide) in paragraph at lines 624--626
  [] 
  []
 
@@ -405,10 +405,10 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 <figures/Lambda_azure.png, id=18, 450.18187pt x 179.16937pt>
 File: figures/Lambda_azure.png Graphic file (type png)
 <use figures/Lambda_azure.png>
-Package pdftex.def Info: figures/Lambda_azure.png  used on input line 656.
+Package pdftex.def Info: figures/Lambda_azure.png  used on input line 658.
 (pdftex.def)             Requested size: 258.0pt x 102.68532pt.
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 655--657
+Overfull \hbox (6.0pt too wide) in paragraph at lines 657--659
  [] 
  []
 
@@ -417,39 +417,44 @@ ambda_azure.png>]
 <figures/AWS_Google_Azure.png, id=26, 395.4775pt x 481.8pt>
 File: figures/AWS_Google_Azure.png Graphic file (type png)
 <use figures/AWS_Google_Azure.png>
-Package pdftex.def Info: figures/AWS_Google_Azure.png  used on input line 677.
+Package pdftex.def Info: figures/AWS_Google_Azure.png  used on input line 679.
 (pdftex.def)             Requested size: 154.80157pt x 188.59229pt.
  [4 <./figures/AWS_Google_Azure.png>]
 (hybrid-cloud-computing.bbl
-Overfull \hbox (43.93243pt too wide) in paragraph at lines 44--47
+Underfull \hbox (badness 10000) in paragraph at lines 44--47
+[]\OT1/ptm/m/n/8 [Online]. Avail-able: https://smartermsp.com/wp-
+ []
+
+
+Overfull \hbox (43.93243pt too wide) in paragraph at lines 50--53
 []\OT1/ptm/m/n/8 [Online]. Avail-able: https://legal.thomsonreuters.com/en/insi
 ghts/miscs/understanding-
  []
 
 
-Underfull \hbox (badness 2065) in paragraph at lines 50--53
+Underfull \hbox (badness 2065) in paragraph at lines 56--59
 []\OT1/ptm/m/n/8 [Online]. Avail-able: https://www.privacyrights.org/blog/priva
 cy-
  []
 
 
-Overfull \hbox (25.26167pt too wide) in paragraph at lines 56--59
+Overfull \hbox (25.26167pt too wide) in paragraph at lines 62--65
 []\OT1/ptm/m/n/8 [Online]. Avail-able: http://www.opengroup.org/cloud/cloud[]fo
 r[]business/p6.htm 
  []
 
 
-Underfull \hbox (badness 2418) in paragraph at lines 92--95
+Underfull \hbox (badness 2418) in paragraph at lines 98--101
 []\OT1/ptm/m/n/8 [Online]. Avail-able: https://docs.microsoft.com/en-us/azure/s
 ql-
  []
 
 ) [5] (hybrid-cloud-computing.aux) ) 
 Here is how much of TeX's memory you used:
- 3996 strings out of 492970
- 68105 string characters out of 3126593
- 136012 words of memory out of 3000000
- 7847 multiletter control sequences out of 15000+200000
+ 3997 strings out of 492970
+ 68121 string characters out of 3126593
+ 136016 words of memory out of 3000000
+ 7848 multiletter control sequences out of 15000+200000
  37337 words of font info for 67 fonts, out of 3000000 for 9000
  1144 hyphenation exceptions out of 8191
  41i,6n,39p,762b,404s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -460,7 +465,7 @@ rograms/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Users/tanvi/AppData/Loc
 al/Programs/MiKTeX 2.9/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/tanvi/AppDat
 a/Local/Programs/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Users/tanvi/Ap
 pData/Local/Programs/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on hybrid-cloud-computing.pdf (5 pages, 280269 bytes).
+Output written on hybrid-cloud-computing.pdf (5 pages, 280338 bytes).
 PDF statistics:
  51 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
