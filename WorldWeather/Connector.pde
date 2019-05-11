@@ -5,7 +5,7 @@
 * objects reffering to the locations latitud, longitud
 * and the timing of the weather that is being called.
 ****************************************************/
-private static final String appid = "03ad271b30271caa0284353f37f3006c";
+private static final String appid = "WEBAPPID";
 
 class Connector
 {
