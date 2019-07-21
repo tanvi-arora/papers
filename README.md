@@ -41,7 +41,7 @@ The data set comes from pulsar candidates collected during the High Time Resolut
 
 Multiple tasks of performing text analytics, creating NLP pipeline , web scraping to fetch data , text processing POS tagging, text similarity.
 
-**python libraries :** numpy, pandas, nltk , 
+**python libraries :** numpy, pandas, nltk , BeautifulSoup, scrapy , pattern 
 
 ## Housing prices in Ames :Prediction
 ![Housing Prices](https://github.com/tanvi-arora/projects/tree/master/Housing%20prices%20in%20Ames%20-%20KaggleP)
