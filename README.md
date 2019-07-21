@@ -1,7 +1,7 @@
 # papers
 Collection of all papers
 
-## Bank Account Customer Promotion : Data Mining 
+## Bank Account Customer Promotion : Classification Models 
 ![bank promo project](https://github.com/tanvi-arora/projects/tree/master/BankAcct_CustomerPromotion)
 
 The data set selected is 'Bank Marketing', provided from the UCI Machine Learning Repository site.This data set follows a Portuguese telemarketing campaign to secure term deposits. As part of this project a deep exploratory analysis was performed to understand the features individually and their relationship with other features through multiple visualizations.
@@ -22,5 +22,18 @@ Grid search used for testing with hyper-parameters
 
 **python libraries :** numpy, pandas, matplotlib , seaborn , sklearn , xgboost, scipy 
 
+## HTRU2 ( High Time Resolution Universe Survey ) : Clustering Algorithms
+![HTRU2](https://github.com/tanvi-arora/projects/tree/master/HTRU2_clusteringAnalysis)
+
+The data set comes from pulsar candidates collected during the High Time Resolution Universe Survey (South) (HTRU2).There are about 2600 pulsars currently known and nearly all lie within our galaxy. There are two kinds of pulsars – normal pulsars (having pulse speed 0.3 – 3 seconds) and millisecond pulsars (MSP, having a pulse period between 1mSec – 10 mSec). The pulse period is very stable and predictable, but not constant. In order to detect pulsars, we look for the electromagnetic radiation that has cyclical pulses. The best analogy is that a pulsar is like a lighthouse – the light is emitted at regular intervals that can be measured from a distance. The HTRU2 study used radio telescopes to scan for wavelengths in that part of the electromagnetic spectrum to detect pulsars.
+
+**Algorithms analyzed :**
+1. K Means Algorithm
+2. GMM Algorithm 
+3. DBSCAN Algorithm
+4. Hiearchical Clustering Algorithms ( Agglomerative clustering, ward , singlelink ,completelink , average linkages and BIRCH )
+5. Spectral Clustering Algorithms ( RBF Kernel and Nearest Neighbour Graph Based )
+
+**python libraries :** numpy, pandas,matplotlib, seaborn, itertools , tqdm,sklearn , mpl_toolkits.mplot3d
 
 
