@@ -62,7 +62,7 @@ This report summarizes the statistical modeling and analysis results for the dat
 
 **SAS** : linear regression, selection techniques, 2-way ANOVA , Fit Diagnostics 
 
-## Kobe BryantShot Selection : Prediction
+## Kobe Bryant Shot Selection : Prediction
 ![Kobe Bryant](https://github.com/tanvi-arora/projects/tree/master/KobeBryantShotSelectionPrediction)
 
 This report summarizes the statistical modeling and analysis results for the data set on Kobe Bryant’s attempted shots.
