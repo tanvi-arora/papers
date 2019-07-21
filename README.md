@@ -46,12 +46,28 @@ Multiple tasks of performing text analytics, creating NLP pipeline , web scrapin
 ## Housing prices in Ames :Prediction
 ![Housing Prices](https://github.com/tanvi-arora/projects/tree/master/Housing%20prices%20in%20Ames%20-%20KaggleP)
 
-Report on statisitcal modeling and analysis results for the residential housing data set in Ames, Iowa.
+This report summarizes statistical modeling and analysis results for the residential housing data set in Ames, Iowa.
 1. Determine the relationship between the sale prices and living areas of the homes
 2. Predictions on the sale prices of homes
 
-**SAS** : Linear Regression
+**SAS** : Linear Regression , Fit Diagnostics 
 
+## Car Prices Prediction : Prediction
+![Car Price](https://github.com/tanvi-arora/projects/tree/master/CarPricesPrediction)
 
+This report summarizes the statistical modeling and analysis results for the data set on car specifications.
+1. quantify the relationship between horsepower of a car and miles per gallon in the city, considering the dependence of that association on fuel type. This model also accounts for the weight of the car
+2. determine the association between body style, excluding convertibles, of a car and mean miles per gallon that can be achieved in the city. This model is used to estimate the difference between mean city miles per gallon between the averages of the various body styles.
+3. Predict car prices : The variable selection methods used are: LASSO, LAR, and OLS-stepwise selection. These models are compared using the Adjusted R2 values, Cross Validation MSPE, and AIC statistics.
 
-statistical
+**SAS** : linear regression, selection techniques, 2-way ANOVA , Fit Diagnostics 
+
+## Kobe BryantShot Selection : Prediction
+![Kobe Bryant](https://github.com/tanvi-arora/projects/tree/master/KobeBryantShotSelectionPrediction)
+
+This report summarizes the statistical modeling and analysis results for the data set on Kobe Bryant’s attempted shots.
+1. quantify the relationship of the odds and probability of Kobe Bryant making a shot and the distance he is from the hoop. This model is built upon to describe the relationship between the distance Kobe is from the basket and the odds of him making a shot while accounting for whether it is a playoff or regular season game.
+2. Shot prediction : classifying shots as made or missed for the test dataset by creating models with known techniques from the training dataset. The methods used were: logistic regression and linear discriminant analysis (LDA). These models are compared using AUC (area under the curve) values, misclassification rate, sensitivity, specificity, and the log loss function.
+
+**SAS** : Data Exploratory Analysis , Logistic regression , Stepwise Linear Discriminant Analysis 
+
