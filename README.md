@@ -36,4 +36,22 @@ The data set comes from pulsar candidates collected during the High Time Resolut
 
 **python libraries :** numpy, pandas,matplotlib, seaborn, itertools , tqdm,sklearn , mpl_toolkits.mplot3d
 
+## Applied NLP 
+![Applied NLP](https://github.com/tanvi-arora/projects/tree/master/AppliedNLP)
 
+Multiple tasks of performing text analytics, creating NLP pipeline , web scraping to fetch data , text processing POS tagging, text similarity.
+
+**python libraries :** numpy, pandas, nltk , 
+
+## Housing prices in Ames :Prediction
+![Housing Prices](https://github.com/tanvi-arora/projects/tree/master/Housing%20prices%20in%20Ames%20-%20KaggleP)
+
+Report on statisitcal modeling and analysis results for the residential housing data set in Ames, Iowa.
+1. Determine the relationship between the sale prices and living areas of the homes
+2. Predictions on the sale prices of homes
+
+**SAS** : Linear Regression
+
+
+
+statistical
