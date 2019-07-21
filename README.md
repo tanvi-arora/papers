@@ -2,6 +2,7 @@
 Collection of all papers
 
 ## Bank Account Customer Promotion : Data Mining 
+![bank promo project](https://github.com/tanvi-arora/projects/tree/master/BankAcct_CustomerPromotion)
 
 The data set selected is 'Bank Marketing', provided from the UCI Machine Learning Repository site.This data set follows a Portuguese telemarketing campaign to secure term deposits. As part of this project a deep exploratory analysis was performed to understand the features individually and their relationship with other features through multiple visualizations.
 Feature Elimination was done using Lasso Logistic Regression. 
