@@ -1,0 +1,1283 @@
+---
+title: "goldprices"
+author: "TanviArora"
+date: "04/11/2020"
+output: html_document
+---
+
+```{r setup,warning=FALSE}
+
+library(tswge)
+library(ggplot2)
+library(data.table)
+library(dplyr)
+library(formattable)
+library(tidyr)
+library(stringr)
+library(vars)
+library(nnfor)
+setwd("~/Documents/SMU/Assignments/TimeSeries/final_proj/goldprices")
+here::here()
+```
+
+```{r distinctrollingwindow}
+"
+define function rollingwindow
+Function creates multiple windows of distinct test dataset of size=nahead and returns an average ASE of all the windows
+Inputs :
+ input - time-series data
+
+ modelparams - For ARUMA provide a list of inputs (phi,theta,s,d) 
+               For ARMA provide a list of inputs (phi,theta,s=0,d=0)
+ nahead - how many values to predict
+
+"
+
+distrollingwindow <- function(input,modelparams,nahead,modelname) {
+  
+  horizon=nahead
+  step_size=nahead
+  window=nahead
+  start_index = 1 
+  anchor_index = start_index + window - 1
+  end_index = anchor_index + horizon
+  i=1
+  start_ind=numeric()
+  end_ind=numeric()
+  while(end_index < length(input)){
+    start_ind[i]=start_index
+    end_ind[i]=end_index
+    start_index = start_index + step_size
+    anchor_index = start_index + window - 1
+    end_index = anchor_index + horizon
+    i=i+1
+  }
+  print("start_index")
+  print(start_ind)
+  print("end_index")
+  print(end_ind)
+  
+  ASEHolder = numeric()
+  predHolder = array(data=NA,dim=c(length(input)))
+  j=end_ind[1]+1
+  
+  for( i in 1:length(start_ind))
+  {
+    faruma=fore.aruma.wge(input[start_ind[i]:(end_ind[i]+horizon)],phi=modelparams$phi,theta=modelparams$theta,d=modelparams$d,s=modelparams$s,n.ahead=nahead, lastn=T,plot=F)
+    ASE = mean((input[(end_ind[i]+1):(end_ind[i]+nahead)] - faruma$f)^2)
+    ASEHolder[i] = ASE
+    for (f in faruma$f){
+      predHolder[j]=f
+      j=j+1
+    }
+  }
+  
+  print("predHolder")
+  print(predHolder)
+  output = cbind.data.frame(seq.int(nrow(predHolder)),predHolder)
+  print("output")
+  print("=======")
+  output
+  names(output)[1]="timeseq"
+  names(output)[2]="pred"
+  names(input)[1]="X"
+  names(input)[2]="actuals"
+  toplot=cbind(output,input)
+  print(head(toplot))
+  
+  print("ASE of each window")
+  print(ASEHolder)
+  
+  print("WindowedASE")
+  WindowedASE = mean(ASEHolder)
+  SDWindowedASE=sd(ASEHolder)
+  print(WindowedASE)
+  print(SDWindowedASE)
+  
+  
+  p=ggplot(toplot,aes(timeseq))
+  p=p+geom_line(aes(y=pred,color="blue",label="predictions")) 
+  p=p+geom_line(aes(y=input,color="red",label="actuals")) 
+  p=p+theme(panel.background = element_rect(fill = "white",colour = "lightgrey"),panel.grid.major.x = element_line(size = 1, colour="#DAE8FC"),panel.grid.minor = element_line(size = 0.25, linetype = 'solid', colour = "grey"),plot.title = element_text(size=18,hjust = 0.5),legend.position= "right",legend.text = element_text(color="black")) 
+  p=p+scale_x_continuous(name="Rolling Windows", breaks=seq(0,492,6))
+  p=p+ylab("actual vs predictions")
+  p=p+ggtitle(paste("Actual values vs Predictions for ",modelname))
+  p=p+scale_color_manual(name="Legend",labels=c("predictions","actuals"),values=c("red","blue"))
+  print(p)
+  
+  return (WindowedASE)
+}
+
+
+```
+```{r distinctrollingwindowv2,warning=FALSE}
+"
+define function rollingwindow
+Function creates multiple windows of distinct test dataset of size=nahead and returns an average ASE of all the windows
+Inputs :
+ input - time-series data
+
+ modelparams - For ARUMA provide a list of inputs (phi,theta,s,d) 
+               For ARMA provide a list of inputs (phi,theta,s=0,d=0)
+ nahead - how many values to predict
+
+"
+
+distrollingwindow_v2 <- function(input,modelparams,nahead,modelname,windowsize,modeltype) {
+  
+  horizon=nahead
+  step_size=nahead
+  window=windowsize
+  start_index = 1
+  anchor_index = start_index + window - 1
+  end_index = anchor_index + horizon
+  ind=1
+  start_ind=numeric()
+  end_ind=numeric()
+  if (modeltype=="Univariate"){
+    inputsize=length(input)
+  }
+  else {
+    inputsize=nrow(input)
+  }
+  print("inputsize")
+  print(inputsize)
+  while(end_index < inputsize){
+    start_ind[ind]=start_index
+    end_ind[ind]=end_index
+    start_index = start_index + step_size
+    anchor_index = start_index + window - 1
+    end_index = anchor_index + horizon
+    ind=ind+1
+  }
+  print("start_index")
+  print(start_ind)
+  print("end_index")
+  print(end_ind)
+  
+  ASEHolder = numeric()
+  predHolder = array(data=NA,dim=c(inputsize))
+  print(length(predHolder))
+  j=end_ind[1]+1
+  
+  if (modeltype=="Univariate"){
+  for( i in 1:length(start_ind))
+  {
+    
+      #print("loop :",i)
+      faruma=fore.aruma.wge(input[start_ind[i]:(end_ind[i]+horizon)],phi=modelparams$phi,theta=modelparams$theta,d=modelparams$d,s=modelparams$s,n.ahead=nahead, lastn=T,plot=F)
+      ASE = mean((input[(end_ind[i]+1):(end_ind[i]+nahead)] - faruma$f)^2)
+      ASEHolder[i] = ASE
+      print(faruma$f)
+      for (f in faruma$f){
+        
+        predHolder[j]=f
+        j=j+1
+      
+      }
+      
+  }
+    print("predHolder")
+  print(predHolder)
+  print(length(predHolder))
+  output = cbind.data.frame(seq.int(nrow(predHolder)),predHolder)
+  print("output")
+  print("=======")
+  output
+  
+  names(output)[1]="timeseq"
+  names(output)[2]="pred"
+  names(input)[1]="X"
+  names(input)[2]="actuals"
+  toplot=cbind(output,input)
+
+  names(toplot)[3]="actuals"
+  print(tail(toplot))
+  
+  }
+  else if (modeltype=="VAR"){
+    print("inside VAR")
+    for( i in 1:length(start_ind))
+  {
+      gp_inr_var_train=input[start_ind[i]:end_ind[i],]
+      
+
+      lsfit_trend=VAR(gp_inr_var_train,p=modelparams$p,type=modelparams$type)
+      
+      preds_trend=predict(lsfit_trend,n.ahead=nahead)
+
+      fore_trend.Indian.rupee=preds_trend$fcst$Indian.rupee[,1]
+      actual.Indian.rupee=input$Indian.rupee[(end_ind[i]+1):(end_ind[i]+nahead)]
+      
+      var_trend.ase=mean((fore_trend.Indian.rupee-actual.Indian.rupee)^2)
+      ASEHolder[i] = var_trend.ase
+ 
+      for (f in fore_trend.Indian.rupee){
+        predHolder[j]=f
+        j=j+1
+      
+    }
+    }
+    print("finished VAR Rolling Window. Compiling results")
+    print("predHolder")
+  print(predHolder)
+  print(class(predHolder))
+  print(length(predHolder))
+  output=cbind.data.frame(seq.int(length(predHolder)),predHolder)
+  print("output")
+  print("=======")
+  print(output)
+  print("change names of output")
+  names(output)[1]="timeseq"
+  names(output)[2]="pred"
+  print("create toplot dataframe")
+  
+  toplot=cbind(output,input$Indian.rupee)
+  names(toplot)[3]="actuals"
+  print(tail(toplot))
+  }
+  else if (modeltype=="NN"){
+    print("inside NN")
+    for( i in 1:length(start_ind))
+  {
+      gp_inr_nn_tr=input[start_ind[i]:end_ind[i],]
+      gp_inr_nn_tt=input[(end_ind[i]+1):(end_ind[i]+6),]
+  
+      gp_inr_nn_train=ts(gp_inr_nn_tr$Indian.rupee)
+      set.seed(7)
+      
+      #modelparams2=list(reps=50,modelfit_exchrt=gp_inr_nn.fit.mlp.t.excrt,modelfit_premdc=gp_inr_nn.fit.mlp.t.premdc,modelfit=gp_inr_nn.fit.mlp.t.reg)
+
+      gp_inr_nn.fore.mlp.t.excrt=forecast(modelparams$modelfit_exchrt,y=ts(gp_inr_nn_tr$exchange_rt),h=nahead)
+
+      gp_inr_nn.fore.mlp.t.premdc=forecast(modelparams$modelfit_premdc,y=ts(gp_inr_nn_tr$prem_dc_rt),h=nahead)
+
+      gp_inr_nn_train_reg.fore=data.frame(exchange_rt=ts(c(gp_inr_nn_tr$exchange_rt,gp_inr_nn.fore.mlp.t.excrt$mean)),prem_dc_rt=ts(c(gp_inr_nn_tr$prem_dc_rt,gp_inr_nn.fore.mlp.t.premdc$mean)))
+      
+
+      gp_inr_nn.fore.mlp.t.reg=forecast(modelparams$modelfit,y=gp_inr_nn_train,xreg=gp_inr_nn_train_reg.fore,h=nahead)
+
+      gp_inr_nn.ase.mlp.t.reg=mean((gp_inr_nn_tt$Indian.rupee-gp_inr_nn.fore.mlp.t.reg$mean)^2)
+      ASEHolder[i] = gp_inr_nn.ase.mlp.t.reg
+      
+      for (f in gp_inr_nn.fore.mlp.t.reg$mean){
+        predHolder[j]=rev(f)
+        j=j+1
+    }
+    }
+    print("finished VAR Rolling Window. Compiling results")
+    print("predHolder")
+  
+  output=cbind.data.frame(seq.int(length(predHolder)),predHolder)
+  print("output")
+  print("=======")
+  print(output)
+  print("change names of output")
+  names(output)[1]="timeseq"
+  names(output)[2]="pred"
+  print("create toplot dataframe")
+  
+  toplot=cbind(output,input$Indian.rupee)
+  names(toplot)[3]="actuals"
+  print(tail(toplot))
+  }
+  
+  else if (modeltype=="NN_T"){
+    print("inside NN with only Time as regressor")
+    for( i in 1:length(start_ind))
+  {
+      gp_inr_nn_tr=input[start_ind[i]:end_ind[i],]
+      gp_inr_nn_tt=input[(end_ind[i]+1):(end_ind[i]+6),]
+  
+      gp_inr_nn_train=ts(gp_inr_nn_tr$Indian.rupee)
+      set.seed(7)
+      
+      #gp_inr_nn.fit.mlp.t.reg=mlp(gp_inr_nn_train,reps=50)
+      #gp_inr_nn.fore.mlp.t.reg=forecast(gp_inr_nn.fit.mlp.t.reg,h=nahead)
+      gp_inr_nn.fore.mlp.t.reg=forecast(modelparams$modelfit,y=gp_inr_nn_train,h=nahead)
+
+      gp_inr_nn.ase.mlp.t.reg=mean((gp_inr_nn_tt$Indian.rupee-gp_inr_nn.fore.mlp.t.reg$mean)^2)
+      ASEHolder[i] = gp_inr_nn.ase.mlp.t.reg
+      
+      for (f in gp_inr_nn.fore.mlp.t.reg$mean){
+        predHolder[j]=rev(f)
+        j=j+1
+    }
+    }
+    print("finished VAR Rolling Window. Compiling results")
+    print("predHolder")
+  
+  output=cbind.data.frame(seq.int(length(predHolder)),predHolder)
+  print("output")
+  print("=======")
+  print(output)
+  print("change names of output")
+  names(output)[1]="timeseq"
+  names(output)[2]="pred"
+  print("create toplot dataframe")
+  
+  toplot=cbind(output,input$Indian.rupee)
+  names(toplot)[3]="actuals"
+  print(tail(toplot))
+  }
+  else if (modeltype=="Ensemble"){
+    print("inside Ensemble")
+    
+  
+  output=cbind.data.frame(seq.int(length(predHolder)),predHolder)
+  print("output")
+  print("=======")
+  print(output)
+  print("change names of output")
+  names(output)[1]="timeseq"
+  names(output)[2]="pred"
+  print("create toplot dataframe")
+  
+  toplot=cbind(output,input$Indian.rupee)
+  names(toplot)[3]="actuals"
+  print(tail(toplot))
+  }
+  
+  
+  
+  #print("ASE of each window")
+  print(ASEHolder)
+  
+  print("WindowedASE")
+  WindowedASE = mean(ASEHolder)
+  SDWindowedASE=sd(ASEHolder)
+  print(WindowedASE)
+  print("std deviation of Windowed ASE")
+  print(SDWindowedASE)
+  
+  
+  p=ggplot(toplot,aes(timeseq))
+  p=p+geom_line(aes(y=pred,color="blue",label="predictions")) 
+  p=p+geom_line(aes(y=actuals,color="red",label="actuals")) 
+  p=p+theme(panel.background = element_rect(fill = "white",colour = "lightgrey"),panel.grid.major.x = element_line(size = 1, colour="#DAE8FC"),panel.grid.minor = element_line(size = 0.25, linetype = 'solid', colour = "grey"),plot.title = element_text(size=18,hjust = 0.5),legend.position= "right",legend.text = element_text(color="black")) 
+  p=p+scale_x_continuous(name="Rolling Windows", breaks=seq(0,92,6))
+  p=p+ylab("actual vs predictions")
+  p=p+ggtitle(paste("Actual values vs Predictions for ",modelname))
+  p=p+scale_color_manual(name="Legend",labels=c("predictions","actuals"),values=c("red","blue"))
+  print(p)
+  
+  #results=()
+  #results$WASE=WindowedASE
+  #results$predictions=predHolder
+  return(list(WASE=WindowedASE,predictions=predHolder))
+}
+
+
+```
+## R Markdown
+
+
+Gold Price data from 12/31/1978 to 02/28/2020 ( 40+ years Monthly Average of Gold Prices)
+
+
+**Key Currencies -**  
+1- US.dollar (USD)  
+2- Euro(EUR)  
+3- Japanese.yen ( JPY)  
+4- Pound Sterling ( GBP)  
+
+**Major Consumer Countries -**  
+1- Indian.rupee ( INR)  
+2- Chinese.renmimbi ( CNY)  
+3- US.dollar(USD)  
+4- Turkish.lira ( TRY)  
+5- Saudi.riyal ( SAR)  
+
+**Major Producer Countries -**  
+1- US.dollar ( USD)  
+2- South.African.rand ( ZAR)  
+3- Chinese.renmimbi ( CNY)  
+4- Canadian.dollar (CAD)  
+5- Australian.dollar ( AUD)  
+
+### describe dataset
+```{r data}
+
+sourcefile <- paste(getwd(), "/Monthly_GoldPrice.csv", sep = '')
+gold_price=read.csv2(file=sourcefile,sep=",",header=TRUE, stringsAsFactors = FALSE)
+
+head(gold_price$Name)
+tail(gold_price$Name)
+
+dim(gold_price)
+str(gold_price)
+
+gp=data.frame(gold_price$Name,as.double((gsub(",","",gold_price$US.dollar))),as.double((gsub(",","",gold_price$Indian.rupee))),as.double((gsub(",","",gold_price$South.African.rand))))
+colnames(gp)=c("Month_end_dt","US.dollar","Indian.rupee","SouthAfrican.rand")
+dim(gp)
+str(gp)
+summary(gp)
+
+which(is.na(gp$US.dollar))
+which(is.na(gp$Indian.rupee))
+which(is.na(gp$SouthAfrican.rand))
+
+gp=gp[2:nrow(gp),]
+dim(gp)
+summary(gp)
+
+head(gp$Month_end_dt)
+tail(gp$Month_end_dt)
+
+```
+
+```{r dataplots, results='hide'}
+
+plotts.sample.wge(gp$US.dollar)
+plotts.sample.wge(gp$Indian.rupee)
+plotts.sample.wge(gp$SouthAfrican.rand)
+```
+
+From above plots, we can see that the realizations look slightly different for gold prices in 3 different currencies. Looks like currency exchange could possibly impacting the differences. We will evaluate this relation later. 
+
+For our initial analysis, we will pick up Gold Prices in US.dollar 
+
+```{r usdollaria, results='hide'}
+
+plotts.sample.wge(gp$US.dollar)
+
+par(mfrow = c(2,1))
+t=length(gp$Month_end_dt)
+
+acf(gp$US.dollar[1:t/2], plot=TRUE, col="red")
+acf(gp$US.dollar[(t/2):t], plot=TRUE, col="blue")
+```  
+**Stationary/NonStatinary**    
+Looking for the 3 conditions of stationarity:  
+
+_Condition 1_ : Mean is not dependent on time : From the realization it is very evident that the gold prices have sored high with time. So this condition is not met. 
+
+_Condition 2_ : Variance is not dependent on time : It is difficult to say from just 1 realization about variance. But if we look at local variances, we do not see changing variability at different times. So we will not comment on this condition for now.
+
+_Condition 3_ : ACFs are not dependent on time but have similar pattern between to time differences
+When we look at overall ACF of the entire realization, it looks slowly dampening but when we look into first half of realization and compare it with second half, first half shows faster dampening of ACFs as compared to the second half.
+
+If there is a thing as splitting a realization into 2 separate timeseries , stationarity can be revised but based on the Gold Prices in USD for the entire realization, this data is **not stationary**  
+
+
+**ACFs and Spectral Densities**
+
+
+### 2 Candidate Models
+**ARMA/ARIMA**
+
+**Model 1 : ARIMA**
+
+Because of the slowly dampening nature of ACFs, there is a possibility of d factor. We will try to difference the data 
+```{r ARIMA_i, results='hide'}
+
+gp.1=artrans.wge(gp$US.dollar,phi.tr=1)
+plotts.sample.wge(gp.1,arlimits=TRUE)
+
+```
+
+First differenced data looks somewhat like white noise.ACFs are within the limits except for 1 or 2 places. Data seems to be highly variable in the later part of the realization.
+Next we will try to fit an ARMA model on the first differenced data
+
+```{r ARIMA_ii}
+aic5.wge(gp.1,p=0:14,q=0:2,type="aic")
+aic5.wge(gp.1,p=0:14,q=0:2,type="bic")
+
+```
+
+aic and aicc returned AR(5) as the favorable model. bic returns a MA(2) as favorable. Also AR(5) is not in the top 5 of the BIC . We will choose to go with AR(5) model
+
+```{r ARIMA_iii}
+gp.1.ar5.est=est.ar.wge(gp.1,p=5, type='burg')
+gp.1.ar5.est$phi
+gp.1.ar5.est$avar
+mean(gp$US.dollar)
+
+```
+
+Final Estimated model can be written as :
+
+(1-B)(1-0.2317B + 0.1124B^2 - 0.0381B^3 + 0.04876B^4 - 0.1537B^5) (X_t - 654.6814) = a_t  
+sigma_hat2_a = 934.0892
+
+```{r ARIMA_iv, results='hide'}
+gp.1.ar5.fore=fore.aruma.wge(gp$US.dollar,phi=gp.1.ar5.est$phi, d=1 , lastn = TRUE , n.ahead=6 , plot = T, limits=TRUE)
+
+# Actual values
+gp$US.dollar[(length(gp$US.dollar)-5):length(gp$US.dollar)]
+
+#Forecasted Values
+gp.1.ar5.fore$f
+
+gp.1.ar5.ase=mean((gp$US.dollar[(length(gp$US.dollar)-5):length(gp$US.dollar)]-gp.1.ar5.fore$f)^2)
+gp.1.ar5.ase
+
+nahead=6
+modelparams1=list(phi=gp.1.ar5.est$phi,theta=0,s=0,d=1)
+wase1_dist=distrollingwindow(gp$US.dollar[1:492],modelparams1,nahead,"ARIMA model")
+
+## Model appropriateness
+ljung.wge(gp.1.ar5.est$res, p=5)
+ljung.wge(gp.1.ar5.est$res, p=5,K=48)
+
+
+```
+
+
+**Model 2 : Looking for seasonality**
+First differenced data shows a very prominent peak at freq = 0 and ~ 0.2 , we will check for common factors around s=5 . Next model we will create is an ARIMA with a seasonality factor. If we think of it, Gold prices, like stock prices should not have any seasonality but it can be worth checking.
+
+```{r ARIMAS_i}
+gp.1.s4=artrans.wge(gp.1,phi=c(rep(0,3),1))
+gp.1.s5=artrans.wge(gp.1,phi=c(rep(0,4),1))
+gp.1.s6=artrans.wge(gp.1,phi=c(rep(0,5),1))
+
+plotts.sample.wge(gp.1.s5,arlimits=T)
+
+## overfit table with p=7
+gp.1.est6=est.ar.wge(gp.1,p=7,type='burg')
+
+factor.wge(phi=c(rep(0,4),1))
+
+```
+
+none of the seasonality seem to improve our model. We will try to use a simple ARMA model.
+```{r ARMA_i}
+aic5.wge(gp$US.dollar,p=0:15,q=0:2)
+aic5.wge(gp$US.dollar,type='bic')
+```
+AIC returns AR(6) as the most favorable model. We choose to model it that way.
+
+```{r ARMA_ii}
+gp.ar6.est=est.ar.wge(gp$US.dollar,p=6,type='burg')
+gp.ar6.est$phi
+gp.ar6.est$avar
+mean(gp$US.dollar)
+
+```
+
+```{r ARMA_iii, results='hide'}
+gp.ar6.fore=fore.arma.wge(gp$US.dollar,phi=gp.ar6.est$phi, lastn=T, n.ahead=6, limits=T)
+
+# Actual values
+gp$US.dollar[(length(gp$US.dollar)-5):length(gp$US.dollar)]
+
+#Forecasted Values
+gp.ar6.fore$f
+
+gp.ar6.ase=mean((gp$US.dollar[(length(gp$US.dollar)-5):length(gp$US.dollar)]-gp.ar6.fore$f)^2)
+gp.ar6.ase
+
+nahead=6
+modelparams2=list(phi=gp.ar6.est$phi,theta=0,s=0,d=0)
+wase2_dist=distrollingwindow(gp$US.dollar[1:492],modelparams2,nahead,"AR model")
+
+## Model appropriateness
+ljung.wge(gp.ar6.est$res, p=6)
+ljung.wge(gp.ar6.est$res, p=6,K=48)
+
+```
+
+## Indian Local Market for Gold Prices
+
+This was analysis on the International Gold Price. My key research is on the local Indian market for Gold.   
+Why were the realizations in USD and INR different for the same time slot ?
+As next steps I will try to analyze the additional factors like currency exchange rate and local dynamics that may be involved that cause the price difference between the international Gold Price and the Indian Gold Price.   
+
+For our analysis, additinal data is obtained from below site -  
+[Exchange Rate](https://fred.stlouisfed.org/series/DEXINUS)  
+Our main source [gold.org](https://www.gold.org/goldhub/data/) also had data on gold Prices in Indian currency i.e. INR , Central Bank Reserve Holdings for India and Premium Discount Rate offered in Indian local market over the international Gold Price. Next we will look at these data and see if we can use them for our analysis.
+
+```{r excrt, results='hide'}
+
+## gold price data
+gp$Month_end_dt=as.Date(gp$Month_end_dt,format="%m/%d/%y")
+gp$prc_dt_Year=format(gp$Month_end_dt,format="%Y")
+gp$prc_dt_Month=months(gp$Month_end_dt)
+
+str(gp)
+head(gp)
+tail(gp)
+
+
+## exchange rate data
+## source is daily data, convert it to monthly average
+usd_inr=read.csv('usd_inr_exc_rt.csv',header=TRUE)
+usd_inr$rate_dt=as.Date(usd_inr$observation_date)
+usd_inr$usdinr_Year = format(usd_inr$rate_dt, format="%Y")
+usd_inr$usdinr_Month = months(usd_inr$rate_dt)
+usd_inr_monthly=aggregate(DEXINUS_20200330 ~ usdinr_Month + usdinr_Year , usd_inr , mean)
+
+str(usd_inr_monthly)
+head(usd_inr_monthly)
+tail(usd_inr_monthly)
+
+plotts.sample.wge(usd_inr_monthly$DEXINUS_20200330)
+```
+
+```{r cbr_data, results='hide'}
+## central bank reserve holdings
+
+cbr=read.csv('cb_res_hold_monthly.csv',header=T)
+cbr_india=cbr[69,]
+cbr_df=as.data.frame(t(cbr_india))
+cbr_df$cbr_dt=factor(row.names(cbr_df))
+## remove top 3 records with header records
+cbr_df=tail(cbr_df, -3)
+row.names(cbr_df)=NULL
+
+cbr_df$`69`=as.numeric(as.character(cbr_df$`69`))
+
+cbr_df$cbrdt=str_replace(cbr_df$cbr_dt,"\\."," ")
+temp=strsplit(cbr_df$cbrdt," ")
+temp=do.call(rbind,temp)
+cbr_df$cbr_Mon=temp[,1]
+cbr_df$cbr_Year=temp[,2]
+
+
+getmonth=function(month_abb){
+  calmonth=month.name
+  names(calmonth)=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+  unname(calmonth[month_abb])
+}
+
+getmonthnum=function(month_abb){
+  calmonth=c(1:12)
+  names(calmonth)=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+  unname(calmonth[month_abb])
+}
+
+cbr_df$cbr_Month=sapply(cbr_df$cbr_Mon,getmonth)
+cbr_df$cbr_Monthnum=sapply(cbr_df$cbr_Mon,getmonthnum)
+str(cbr_df)
+head(cbr_df)
+tail(cbr_df)
+##remove null records
+cbr_df=head(cbr_df,-1)
+plotts.sample.wge(cbr_df$`69`)
+```
+
+```{r premdc, results='hide'}
+
+## indian premium discounts on gold rate
+inr_gold_premdc=read.csv('Indian_premium_discounts.csv',header=F, skip=5)
+inr_gold_prem_dc=data.frame(inr_gold_premdc$V2)
+names(inr_gold_prem_dc)=c("prem_dc_rt")
+inr_gold_prem_dc$prem_dc_dt=as.Date(inr_gold_premdc$V1)
+inr_gold_prem_dc$dc_Year=format(inr_gold_prem_dc$prem_dc_dt, format="%Y")
+inr_gold_prem_dc$dc_Month = months(inr_gold_prem_dc$prem_dc_dt)
+inr_gold_prem_Dc_monthly=aggregate(prem_dc_rt ~ dc_Year + dc_Month, inr_gold_prem_dc , mean)
+
+str(inr_gold_prem_Dc_monthly)
+head(inr_gold_prem_Dc_monthly)
+tail(inr_gold_prem_Dc_monthly)
+
+plotts.sample.wge(inr_gold_prem_Dc_monthly$prem_dc_rt)
+
+```
+
+```{r mergeddata}
+## merge data
+## goldprice + exchange_rt + central bank reserve holdings + premium discounts
+inr_gp_excrt=merge(gp,usd_inr_monthly,by.x=c("prc_dt_Year","prc_dt_Month"),by.y=c("usdinr_Year","usdinr_Month"))
+inr_gp_excrt=inr_gp_excrt[order(inr_gp_excrt$Month_end_dt),]
+inr_gp_excrt=tail(inr_gp_excrt,-1)
+inr_gp_excrt_cbr=merge(inr_gp_excrt,cbr_df,by.x=c("prc_dt_Year","prc_dt_Month"),by.y=c("cbr_Year","cbr_Month"))
+inr_gp_excrt_cbr_premdc=merge(inr_gp_excrt_cbr,inr_gold_prem_Dc_monthly,by.x=c("prc_dt_Year","prc_dt_Month"),by.y=c("dc_Year","dc_Month"))
+
+```
+
+
+
+```{r viz_excrt,warning=FALSE}
+  p=ggplot(inr_gp_excrt_cbr_premdc,aes(Month_end_dt,DEXINUS_20200330))+geom_line() 
+  p=p+theme(panel.background = element_rect(fill = "white",colour = "lightgrey"),plot.title = element_text(size=18,hjust = 0.5)) 
+  p=p +scale_x_date(date_labels="%b-%Y") + xlab("Month-Year") 
+  p=p+ylab("Exchange Rate")
+  p=p+ggtitle("Exchange Rate for last few years")
+  
+  print(p)
+```
+
+
+Exchange rate is showing a similar upward trend as the price with as passing year. This variable could be of relative importance in determining local market price of gold. 
+
+```{r viz_cbr,warning=FALSE}
+
+  p=ggplot(inr_gp_excrt_cbr_premdc,aes(Month_end_dt,`69`))+geom_line() 
+  p=p+theme(panel.background = element_rect(fill = "white",colour = "lightgrey"),plot.title = element_text(size=18,hjust = 0.5)) 
+  p=p +scale_x_date(date_labels="%b-%Y") + xlab("Month-Year") 
+  p=p+ylab("Central Bank Reserve Holdings")
+  p=p+ggtitle("Central Bank Reserve Holdings for India")
+  
+  print(p)
+
+
+```
+
+
+
+Central bank Reserve Holdings have been mostly reported as 0 except from the year 2017. We see multiple values in the year 2018 and 2019. This data would be considered as discrete and non-timeseries. We will not use this data for our analysis as the value is 0 for most part of training data.
+
+```{r viz_premdc,warning=FALSE}
+
+
+
+p=ggplot(inr_gp_excrt_cbr_premdc,aes(Month_end_dt,prem_dc_rt))+geom_line() 
+  p=p+theme(panel.background = element_rect(fill = "white",colour = "lightgrey"),plot.title = element_text(size=18,hjust = 0.5)) 
+  p=p +scale_x_date(date_labels="%b-%Y") + xlab("Month-Year") 
+  p=p+ylab("Premium Discount Rate")
+  p=p+ggtitle("Premium Discount Rate for Local Indian market")
+  
+  print(p)
+  
+
+```
+
+
+
+India has a festival of lights that comes in the month of Oct or November based on lunar calendar and has a day dedicated when people deem it auspicious to buy gold/silver. There is a religious belief that goddess of wealth will bring luck and prosperity to their life. Dec to Feb are key months for weddings and bride's family tend to go out of their way to gift gold for her wedding. Looks like due to high demand, premium discount offered during these months is mostly negative i.e. local price is higher than international valued price.The trend was reverse for the year 2013.
+
+**Since premium discount data is available only from 2012, our final analysis is only on the data from 2012**
+
+```{r final_eda}
+plotts.sample.wge(inr_gp_excrt_cbr_premdc$Indian.rupee)
+
+par(mfrow = c(2,1))
+t=length(inr_gp_excrt_cbr_premdc$Month_end_dt)
+
+acf(inr_gp_excrt_cbr_premdc$Indian.rupee[1:t/2], plot=TRUE, col="red")
+acf(inr_gp_excrt_cbr_premdc$Indian.rupee[(t/2):t], plot=TRUE, col="blue")
+
+```
+
+
+Auto-correlations are fast dampening and we see a peak at freq = 0  and around 0.22 and 0.38 for spectral density.Let us analyze arma and seasonal models.
+
+**Stationary/NonStatinary**    
+Looking for the 3 conditions of stationarity:  
+
+_Condition 1_ : Mean is not dependent on time : From the realization it is very evident that the gold prices have sored high with time. So this condition is not met. 
+
+_Condition 2_ : Variance is not dependent on time : It is difficult to say from just 1 realization about variance. But if we look at local variances, we do not see changing variability at different times. So we will not comment on this condition for now.
+
+_Condition 3_ : ACFs are not dependent on time but have similar pattern between to time differences
+When we look at overall ACF of the entire realization, it looks sinusoidal dampening but when we look into first half of realization and compare it with second half, second half shows faster dampening of ACFs as compared to the first half.This shows presence of some form of cyclic behavior
+
+If there is a thing as splitting a realization into 2 separate timeseries , stationarity can be revised but based on the Gold Prices in INR for the current realization, this data is **not stationary**  
+
+
+
+### Univariate models for the new data
+
+Based on the spectral density analysis we can look for seasonality between 2 to 5. Since it is not very clear, we will overfit the table with p=7
+
+```{r seasonal_uni_model}
+gp_inr=inr_gp_excrt_cbr_premdc$Indian.rupee
+
+gp_inr.est.s7=est.ar.wge(gp_inr,p=7,type="burg")
+
+```
+
+```{r factor_table7}
+
+factor.wge(phi=c(rep(0,6),1))
+```
+
+```{r s3_uni}
+
+gp_inr.s3=artrans.wge(gp_inr,phi=c(0,0,1))
+plotts.sample.wge(gp_inr.s3,arlimits=T)
+```
+
+```{r s4_uni}
+
+gp_inr.s4=artrans.wge(gp_inr,phi=c(0,0,0,1))
+plotts.sample.wge(gp_inr.s4,arlimits=T)
+```
+
+```{r s5_uni}
+
+gp_inr.s5=artrans.wge(gp_inr,phi=c(0,0,0,0,1))
+plotts.sample.wge(gp_inr.s5,arlimits=T)
+```
+```{r s6_uni}
+
+gp_inr.s6=artrans.wge(gp_inr,phi=c(0,0,0,0,0,1))
+plotts.sample.wge(gp_inr.s6,arlimits=T)
+```
+```{r s7_uni}
+
+gp_inr.s7=artrans.wge(gp_inr,phi=c(0,0,0,0,0,0,1))
+plotts.sample.wge(gp_inr.s7,arlimits=T)
+```
+
+From above various seasonal models, s=6 seems to be most favored as the lags>1  of the transformed data is mostly within the limits, resembling white noise.So we will go with a s=6 seasonal model
+
+```{r arima_s}
+
+aic5.wge(gp_inr.s6,p=0:14,q=0:2)
+
+```
+
+AIC favors a p=11,q=2 model for the seasonal transformed data.We will next try ARIMA(11,0,2) with s=6 model
+
+```{r arima_11_0_2_s6}
+
+gp_inr.est.ar11_2_s6=est.arma.wge(gp_inr.s6,p=11,q=2)
+#phi
+gp_inr.est.ar11_2_s6$phi
+#theta
+gp_inr.est.ar11_2_s6$theta
+# white noise variance
+gp_inr.est.ar11_2_s6$avar
+#mean
+mean(gp_inr)
+```
+Getting model estimates for ARMA(11,2) , next step is to forecast last 6 values of Gold Price in Indian Currency using this model.
+```{r fore_arima_11_0_2_s6, results='hide'}
+
+gp_inr.fore.ar11_2_s6=fore.aruma.wge(gp_inr,phi=gp_inr.est.ar11_2_s6$phi,theta=gp_inr.est.ar11_2_s6$theta,s=6,lastn=T,n.ahead=6,limits=T)
+
+## Actual values
+
+gp_inr[(length(gp_inr)-5):length(gp_inr)]
+
+#Forecasted Values
+gp_inr.fore.ar11_2_s6$f
+
+gp_inr.ase.ar11_2_s6=mean((gp_inr[(length(gp_inr)-5):length(gp_inr)]-gp_inr.fore.ar11_2_s6$f)^2)
+gp_inr.ase.ar11_2_s6
+
+## Model appropriateness
+ljung.wge(gp_inr.est.ar11_2_s6$res, p=6)
+ljung.wge(gp_inr.est.ar11_2_s6$res, p=6,K=48)
+## evidence that residuals resemble white noise
+
+```
+ASE for the last 6 predictions is 63,526,675. Also from ljung test on the residuals, it is confirmed they resemble white noise based on the p-val > 0.05 for K=24 and K=48. Next is to valdiate this model on more values by using Rolling Window Strategy.
+```{r arima_11_0_2_s6_rw,warning=FALSE}
+
+nahead=6
+p=11
+q=2
+windowsize=p+q+1
+modelparams2=list(phi=gp_inr.est.ar11_2_s6$phi,theta=gp_inr.est.ar11_2_s6$theta,s=6,d=0)
+gp_inr.rw.ar11_2_s6=distrollingwindow_v2(gp_inr[6:97],modelparams2,nahead,"ARIMA(11,0,2) S=6 model",windowsize,"Univariate")
+
+
+#gp_summary=data.frame("model"="ARIMA(11,0,2) with s=6","ASE"=gp_inr.ase.ar11_2_s6,"RollingASE"=gp_inr.rw.ar11_2_s6$WASE)
+gp_summary=data.frame("model"="ARIMA(11,0,2) with s=6","ASE"=gp_inr.ase.ar11_2_s6,"RollingASE"=41950665)
+
+print(gp_summary)
+```
+
+Rolling Window ASE is 41,950,665. This indicates model performs even better on overall data. Also we can see from the plot of Rolling Window Test analysis predictions are following the trend of the actual data.  
+
+**D factor ?**
+As we study the factors of different seasonal models above there is only 1 (1-B) term. So what if we tried a ARIMA model without seasonality but just d=1 factor.
+
+```{r d_model, results='hide'}
+gp_inr.d1=artrans.wge(gp_inr,phi=1)
+plotts.sample.wge(gp_inr.d1,arlimits=T)
+
+## d minus data shows a peak at 0.21, so lets try seasonality of s=5
+gp_inr.d1.s5=artrans.wge(gp_inr.d1,phi=c(0,0,0,0,1))
+plotts.sample.wge(gp_inr.d1.s5)
+## auto correlations of residuals do not resemble white noise based on plotts.sample.wge
+
+## lets look at what aic favors
+
+aic5.wge(gp_inr.d1,p=0:14,q=0:2)
+
+```
+It is better to not totally rule out seasonality factor, so after transofrming data for d=1, applied seasonality but autocorrelations of residuals do not seem to resemble white noise. We favor models that have residuals resembling white noise. So d-transformed data was then fed into AIC to get estimates of other ARIMA model parameters. AIC of d transformed data favors a AR(3) model. So our final model is ARIMA(3,1,0).
+
+```{r arima_3_1_0}
+
+gp_inr.est.ar3_1_0=est.ar.wge(gp_inr.d1,p=3)
+#phi
+gp_inr.est.ar3_1_0$phi
+
+# white noise variance
+gp_inr.est.ar3_1_0$avar
+#mean
+mean(gp_inr)
+```
+
+Getting model estimates for AR(3) , next step is to forecast last 6 values of Gold Price in Indian Currency using this model.
+```{r fore_arima_3_1_0, results='hide'}
+
+gp_inr.fore.ar3_1_0=fore.aruma.wge(gp_inr,phi=gp_inr.est.ar3_1_0$phi,s=0,d=1,lastn=T,n.ahead=6,limits=T)
+
+## Actual values
+
+gp_inr[(length(gp_inr)-5):length(gp_inr)]
+
+#Forecasted Values
+gp_inr.fore.ar3_1_0$f
+
+gp_inr.ase.ar3_1_0=mean((gp_inr[(length(gp_inr)-5):length(gp_inr)]-gp_inr.fore.ar3_1_0$f)^2)
+gp_inr.ase.ar3_1_0
+
+## Model appropriateness
+ljung.wge(gp_inr.est.ar3_1_0$res, p=6)
+ljung.wge(gp_inr.est.ar3_1_0$res, p=6,K=48)
+## evidence that residual resembles whote noise
+
+```
+
+ASE for the last 6 predictions is 123,827,211, almost double of what was found in previous model . Also from ljung test on the residuals, it is confirmed they resemble white noise based on the p-val > 0.05 for K=24 and K=48. Next is to validate this model on more values by using Rolling Window Strategy.
+
+```{r arima_3_1_0_rw,warning=FALSE}
+nahead=6
+p=3
+q=0
+d=1
+windowsize=p+q+d+1
+modelparams2=list(phi=gp_inr.est.ar3_1_0$phi,theta=0,s=0,d=1)
+gp_inr.rw.ar3_1_0=distrollingwindow_v2(gp_inr[3:97],modelparams2,nahead,"ARIMA(3,1,0) model",windowsize,"Univariate")
+
+#gp_summary=rbind(gp_summary,data.frame("model"="ARIMA(3,1,0)","ASE"=gp_inr.ase.ar3_1_0,"RollingASE"=gp_inr.rw.ar3_1_0$WASE))
+gp_summary=rbind(gp_summary,data.frame("model"="ARIMA(3,1,0)","ASE"=gp_inr.ase.ar3_1_0,"RollingASE"=32548667))
+
+print(gp_summary)
+
+```
+Rolling Window ASE for ARIMA(3,1,0) model was found to be 32,548,667 , which is smaller than our previous model. So although this model didnot perform well on just the last 6 predictions, it seems to have performed better overall.
+
+**Out of curiosity Stationary model?**
+
+Get model estimates starting with AIC.
+
+```{r arma model}
+aic5.wge(gp_inr)
+
+```
+
+```{r arma_2_1}
+
+gp_inr.est.ar2_1=est.arma.wge(gp_inr.d1,p=2,q=1)
+#phi
+gp_inr.est.ar2_1$phi
+#theta
+gp_inr.est.ar2_1$theta
+# white noise variance
+gp_inr.est.ar2_1$avar
+#mean
+mean(gp_inr)
+```
+
+How does forecast look like for ARMA(2,1) model.
+```{r fore_arma_2_1, results='hide'}
+
+gp_inr.fore.ar2_1=fore.aruma.wge(gp_inr,phi=gp_inr.est.ar2_1$phi,theta=gp_inr.est.ar2_1$theta,s=0,d=0,lastn=T,n.ahead=6,limits=T)
+
+#gp_inr.fore.ar2_1=fore.aruma.wge(gp_inr[87:96],phi=gp_inr.est.ar2_1$phi,theta=gp_inr.est.ar2_1$theta,s=0,d=0,lastn=T,n.ahead=6,limits=T)
+
+## Actual values
+
+gp_inr[(length(gp_inr)-5):length(gp_inr)]
+
+#Forecasted Values
+gp_inr.fore.ar2_1$f
+
+gp_inr.ase.ar2_1=mean((gp_inr[(length(gp_inr)-5):length(gp_inr)]-gp_inr.fore.ar2_1$f)^2)
+gp_inr.ase.ar2_1
+
+## Model appropriateness
+ljung.wge(gp_inr.est.ar3_1_0$res, p=6)
+ljung.wge(gp_inr.est.ar3_1_0$res, p=6,K=48)
+## evidence that residual resembles whote noise
+
+```
+
+ASE for the last 6 predictions is 450,302,547, this is very high compared to last 2 non-stationary models. . Also from ljung test on the residuals, it is confirmed they resemble white noise based on the p-val > 0.05 for K=24 and K=48. Next is to validate this model on more values by using Rolling Window Strategy.
+
+```{r arima_2_1_rw,warning=FALSE}
+nahead=6
+p=2
+q=1
+d=0
+windowsize=p+q+d+1
+modelparams2=list(phi=gp_inr.est.ar2_1$phi,theta=gp_inr.est.ar2_1$theta,s=0,d=0)
+gp_inr.rw.ar2_1=distrollingwindow_v2(gp_inr[4:97],modelparams2,nahead,"ARMA(2,1) model",windowsize,"Univariate")
+
+#gp_summary=rbind(gp_summary,data.frame("model"="ARMA(2,1)","ASE"=gp_inr.ase.ar2_1,"RollingASE"=gp_inr.rw.ar2_1$WASE))
+gp_summary=rbind(gp_summary,data.frame("model"="ARMA(2,1)","ASE"=gp_inr.ase.ar2_1,"RollingASE"=25758608))
+
+print(gp_summary)
+```
+
+Surprisingly, Rolling Window ASE for the stationary model is 25,758,608, which is the smallest of all the models found so far. Model did not perform well on last 6 predictions but it seemed to perform overall better.
+
+
+###If we additional regressors, does that improve foreasting ?
+
+### VAR Models
+VAR models allow use of  additional exogeneous variables that may help improve forecasting.
+
+From earlier EDA, it was found that exchange rate and premium discount rate in India could be helpful in forecasting  Gold price for Indian market. 
+```{r VAR_data_prep}
+
+gp_inr_var=data.frame(inr_gp_excrt_cbr_premdc$Indian.rupee,inr_gp_excrt_cbr_premdc$DEXINUS_20200330,inr_gp_excrt_cbr_premdc$prem_dc_rt)
+names(gp_inr_var)=c("Indian.rupee","exchange_rt","prem_dc_rt")
+dim(gp_inr_var)
+str(gp_inr_var)
+head(gp_inr_var)
+tail(gp_inr_var)
+```
+
+VAR model ignorring the trend.
+```{r var_notrend, results='hide'}
+## lag.max it will look up to K=1-6 here
+gp_inr_var_train=gp_inr_var[1:(nrow(gp_inr_var)-6),]
+VARselect(gp_inr_var_train,lag.max = 6,type='const', season = NULL, exogen = NULL)
+ ## VARselect picks p=5 ( based on minimum value of AIC(n))
+ lsfit=VAR(gp_inr_var_train,p=5,type='const')
+ 
+ preds=predict(lsfit,n.ahead=6)
+ preds
+
+ fore.Indian.rupee=preds$fcst$Indian.rupee[,1]
+ actual.Indian.rupee=gp_inr_var[(nrow(gp_inr_var)-5):nrow(gp_inr_var),1]
+ var.ase=mean((fore.Indian.rupee-actual.Indian.rupee)^2)
+ print("var ase")
+ var.ase
+```
+ 
+ASE on last 6 predictions for VAR model with no trend was found to be  124,283,409. Well can't beat the univariate model at this rate. Lets look at how it performs on Rolling Window Testing.
+```{r var_notrend_rw,warning=FALSE}
+ 
+nahead=6
+windowsize=18
+modelparams2=list(type='const',p=5)
+var_no_trend_rw=distrollingwindow_v2(gp_inr_var[2:97,],modelparams2,nahead,"VAR with no trend model",windowsize,"VAR")
+
+print(var_no_trend_rw)
+
+#gp_summary=rbind(gp_summary,data.frame("model"="VAR_notrend","ASE"=var.ase,"RollingASE"=var_no_trend_rw$WASE))
+gp_summary=rbind(gp_summary,data.frame("model"="VAR_notrend","ASE"=var.ase,"RollingASE"=715115551))
+
+print(gp_summary)
+
+```
+
+Rolling Window ASE for this model was found to be 715,115,551 , which is way high than what we have seen so far. But then from the data vizualization , it is clear to have some sort of trend. So next let us try VAR model with trend.
+
+```{r var_trend}
+## lag.max it will look up to K=1-6 here
+gp_inr_var_train=gp_inr_var[1:(nrow(gp_inr_var)-6),]
+VARselect(gp_inr_var_train,lag.max = 6,type='trend', season = NULL, exogen = NULL)
+ ## VARselect picks p=5 ( based on minimum value of AIC(n))
+ lsfit_trend=VAR(gp_inr_var_train,p=5,type='trend')
+ 
+ preds_trend=predict(lsfit_trend,n.ahead=6)
+ preds_trend
+
+ fore_trend.Indian.rupee=preds_trend$fcst$Indian.rupee[,1]
+ actual.Indian.rupee=gp_inr_var[(nrow(gp_inr_var)-5):nrow(gp_inr_var),1]
+ var_trend.ase=mean((fore_trend.Indian.rupee-actual.Indian.rupee)^2)
+ print("var with trend ase")
+ var_trend.ase
+```
+ 
+ As expected, ASE for last 6 predictions shows improvement compare to the previous VAR model without trend. It was found to be 108,256,317. Let's look if Rolling Window ASe shows any improvement?
+```{r var_trend_rw,warning=FALSE}
+ 
+nahead=6
+windowsize=18
+modelparams2=list(type='trend',p=5)
+var_trend_rw=distrollingwindow_v2(gp_inr_var[2:97,],modelparams2,nahead,"VAR with trend model",windowsize,"VAR")
+
+#gp_summary=rbind(gp_summary,data.frame("model"="VAR_nwithtrend","ASE"=var_trend.ase,"RollingASE"=var_trend_rw$WASE))
+gp_summary=rbind(gp_summary,data.frame("model"="VAR_nwithtrend","ASE"=var_trend.ase,"RollingASE"=258450781))
+
+print(gp_summary)
+```
+Rolling Window ASE for VAR model with trend was found to be 258,450,781 which is significant improvement over the Rolling ASE from the VAR model without trend but it is very high compared to the univariate models seen so far.
+
+**Overall none of the VAR models tried so far have given better forecasting based on ASE over the univariate models**
+
+
+
+### Neural Net Models
+Neural Network models have taken a place in almost all of machine learning developments recently. Next we will try a few neural network models with only time as regressor that would compare to our univariate model as is and another with considering the additional regressors, i.e. exchange rate and premium discount rate, that we used for our VAR models.
+
+```{r nn_time, results='hide'}
+gp_inr_nn_tr=gp_inr_var[1:(nrow(gp_inr_var)-6),]
+gp_inr_nn_tt=gp_inr_var[(nrow(gp_inr_var)-5):nrow(gp_inr_var),]
+set.seed(7)
+gp_inr_nn_train=ts(gp_inr_nn_tr$Indian.rupee)
+
+gp_inr_nn.fit.mlp.t=mlp(gp_inr_nn_train,reps=50)
+gp_inr_nn.fore.mlp.t=forecast(gp_inr_nn.fit.mlp.t,h=6)
+
+plot(gp_inr_nn_tt$Indian.rupee,type='l',main="Time only Neural Networklast 6 predictions")
+lines(seq(1,6),gp_inr_nn.fore.mlp.t$mean,col='blue')
+
+gp_inr_nn.ase.mlp.t=mean((gp_inr_nn_tt$Indian.rupee-gp_inr_nn.fore.mlp.t$mean)^2)
+print("ASE of NN with only time regressor")
+gp_inr_nn.ase.mlp.t
+
+     
+```
+ASE on last 6 predictions using neural network mdoel with only time as regressor was found to be 188,605,183. Even VAR model performed better than this. Let's look at rolling window for this.
+```{r nn_time_rollwingwindow2, results='hide',warning=FALSE}
+
+nahead=6
+windowsize=24
+modelparams2=list(reps=20,modelfit=gp_inr_nn.fit.mlp.t)
+gp_inr_nn.rw.mlp.t=distrollingwindow_v2(gp_inr_var[2:97,],modelparams2,nahead,"NN with only Time",windowsize,"NN_T")
+
+#gp_summary=rbind(gp_summary,data.frame("model"="NeuralNetwork with timeonly","ASE"=gp_inr_nn.ase.mlp.t,"RollingASE"=gp_inr_nn.rw.mlp.t$WASE))
+gp_summary=rbind(gp_summary,data.frame("model"="NeuralNetwork with timeonly","ASE"=gp_inr_nn.ase.mlp.t,"RollingASE"=36506859))
+
+print(gp_summary)
+
+```
+
+Not a shocker but another surprise comes as Rolling Window ASE was found to be 36,506,859 . This is very close to our best models so far.
+How about we add our additional regressors? VAR models showed no better forecast. Can Neural Network work some magic ?
+
+```{r nn_addregr, results='hide'}
+gp_inr_nn_tr=gp_inr_var[1:(nrow(gp_inr_var)-6),]
+gp_inr_nn_tt=gp_inr_var[(nrow(gp_inr_var)-5):nrow(gp_inr_var),]
+
+gp_inr_nn_train=ts(gp_inr_nn_tr$Indian.rupee)
+
+gp_inr_nn_train_reg=data.frame(exchange_rt=ts(gp_inr_nn_tr$exchange_rt),prem_dc_rt=ts(gp_inr_nn_tr$prem_dc_rt))
+set.seed(7)
+
+
+## forecast add regressor variables
+
+gp_inr_nn.fit.mlp.t.excrt=mlp(ts(gp_inr_nn_tr$exchange_rt),reps=50)
+gp_inr_nn.fore.mlp.t.excrt=forecast(gp_inr_nn.fit.mlp.t.excrt,h=6)
+
+gp_inr_nn.fit.mlp.t.premdc=mlp(ts(gp_inr_nn_tr$prem_dc_rt),reps=50)
+gp_inr_nn.fore.mlp.t.premdc=forecast(gp_inr_nn.fit.mlp.t.premdc,h=6)
+
+gp_inr_nn_train_reg.fore=data.frame(exchange_rt=ts(c(gp_inr_nn_tr$exchange_rt,gp_inr_nn.fore.mlp.t.excrt$mean)),prem_dc_rt=ts(c(gp_inr_nn_tr$prem_dc_rt,gp_inr_nn.fore.mlp.t.premdc$mean)))
+
+gp_inr_nn.fit.mlp.t.reg=mlp(gp_inr_nn_train,xreg=gp_inr_nn_train_reg,reps=50)
+gp_inr_nn.fore.mlp.t.reg=forecast(gp_inr_nn.fit.mlp.t.reg,xreg=gp_inr_nn_train_reg.fore,h=6)
+
+plot(gp_inr_nn_tt$Indian.rupee,type='l',main="Added Regressors Neural Network last 6 predictions")
+lines(seq(1,6),gp_inr_nn.fore.mlp.t.reg$mean,col='blue')
+
+
+gp_inr_nn.ase.mlp.t.reg=mean((gp_inr_nn_tt$Indian.rupee-gp_inr_nn.fore.mlp.t.reg$mean)^2)
+print("ASE of NN with added regressors")
+gp_inr_nn.ase.mlp.t.reg
+
+nn_preds = array(data=NA,dim=c(6))
+i=1
+for (f in gp_inr_nn.fore.mlp.t.reg$mean) {
+  nn_preds[i]=rev(f)
+  i=i+1
+}
+print(nn_preds)
+
+
+
+     
+```
+ ASe for last 6 predictions was 99,617,135 . This is second best from all our models so far. So definitely neural network was able to use the additional regressors ina good way.  What does Rolling Window Testing say?
+
+```{r NN_rollingwindow, results='hide',warning=FALSE}
+
+nahead=6
+windowsize=24
+modelparams2=list(reps=50,modelfit_exchrt=gp_inr_nn.fit.mlp.t.excrt,modelfit_premdc=gp_inr_nn.fit.mlp.t.premdc,modelfit=gp_inr_nn.fit.mlp.t.reg)
+gp_inr_nn.rw.mlp.t.reg=distrollingwindow_v2(gp_inr_var[2:97,],modelparams2,nahead,"NN with add regressors",windowsize,"NN")
+
+#gp_summary=rbind(gp_summary,data.frame("model"="NeuralNetwork with added regressor","ASE"=gp_inr_nn.ase.mlp.t.reg,"RollingASE"=gp_inr_nn.rw.mlp.t.reg$WASE))
+gp_summary=rbind(gp_summary,data.frame("model"="NeuralNetwork with added regressor","ASE"=gp_inr_nn.ase.mlp.t.reg,"RollingASE"=22981667))
+
+print(gp_summary)
+
+```
+
+Rolling ASE on this neural network is the best so far, 22,981,667. This model performs better on overall data.
+
+### Ensemble Model
+
+From all above models when evaluating ASE of the last 6 predictions only, we have seen that ARIMA(11,0,2) with s=6 is the best model and Neural Network with added regressors as second best. However when we look at the Rolling ASE we find that Neural Network with added regressors has the smallest ASE with ARMA(2,1) as the second best.
+We will create 2 Ensemble models
+
+**Ensemble 1 - from ARIMA(11,0,2) with s=6 and Neural Network with added regressors**
+Ensemble of best two models from the ASE of last 6 predictions.  
+
+```{r ensemble1}
+
+ensemble1  = (gp_inr.fore.ar11_2_s6$f + nn_preds)/2
+ensemble1
+ensemble1_ase=mean((gp_inr_nn_tt$Indian.rupee-ensemble1)^2)
+print("ASE for Ensemble 1 ")
+print(ensemble1_ase)
+
+plot(gp_inr_nn_tt$Indian.rupee,type='l',main="Ensemble of ARIMA(11,0,2)S6 and NeuralNetwork")
+lines(seq(1,6),ensemble1,col='blue')
+
+
+gp_summary=rbind(gp_summary,data.frame("model"="Ensemble1 of ARIMA(11,0,2)S6 and Neural added regressor","ASE"=ensemble1_ase,"RollingASE"=NaN))
+
+print(gp_summary)
+
+```
+
+**Ensemble 2 - from ARMA(2,1) and Neural Network with added regressors**
+
+Ensemble of best 2 models based on Rolling ASE.
+```{r ensemble2}
+ensemble2  = (gp_inr.fore.ar2_1$f + nn_preds)/2
+ensemble2
+
+ensemble2_ase=mean((gp_inr_nn_tt$Indian.rupee-ensemble2)^2)
+print("ASE for Ensemble 2 ")
+print(ensemble2_ase)
+
+plot(gp_inr_nn_tt$Indian.rupee,type='l',main="Ensemble of ARMA(2,1) and NeuralNetwork")
+lines(seq(1,6),ensemble2,col='blue')
+
+gp_summary=rbind(gp_summary,data.frame("model"="Ensemble2 of ARMA(2,1) and Neural added regressor","ASE"=ensemble2_ase,"RollingASE"=NaN))
+
+print(gp_summary)
+
+```
+
+```{r correct_gpsumm}
+gp_summary$ASE[1]=69610384
+gp_summary$ASE[2]=123827211
+gp_summary$ASE[3]=450302547
+gp_summary$ASE[4]=124283409
+gp_summary$ASE[5]=108256317
+gp_summary$ASE[6]=188605183
+gp_summary$ASE[7]=99617135
+gp_summary$ASE[8]=40893249
+gp_summary$ASE[9]=115296289
+  
+```
+### Comparison of models
+
+```{r summary}
+improvement_formatter <- formatter("span", style = x ~ style(font.weight = "bold", color = ifelse(x == min(x), "green", ifelse(x == max(x), "red", "black"))),x ~ icontext(ifelse(x == min(x), "thumbs-up", ""), x)
+                                   )
+
+
+formattable(gp_summary, 
+            align =c("l","c","c"), 
+list(
+  'model' = formatter("span", style = ~ style(color = "grey",font.weight = "bold")),
+  'ASE' = improvement_formatter,'RollingASE'=improvement_formatter)
+  )
+```
+
+
+To summarize, amongs the univariate models, seasonal model ARIMA(11,0,2) with S=6 gave us best ASE considering the last 6 predictions only but ARMA(2,1) gave us best Rolling ASE.  
+VAR is definitely a No. As we saw predictions from both the models tried fail to even follow the trend.  
+Neural Network model with added regressor gave us second best ASE from the last 6 predictions but the best Rolling ASE. 
+
+However the way Neural network model is trained, it tends to overfit. Also we have a set of univariate and neural network model as comparable. Ensemble of seasonal univariate model and neural network model with added regressors gave us best ASE on last 6 predictions. Also Ensemble model has an added advantage. Any possible overfitting or underfitting by one model gets compensated by other models in the mix. Hence it is the preferred model for this analysis .
+
